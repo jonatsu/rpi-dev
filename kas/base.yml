@@ -1,0 +1,155 @@
+#
+# KAS documentation
+# https://kas.readthedocs.io/en/5.2/userguide/project-configuration.html
+#
+# Some helpful references:
+#
+# https://github.com/bootlin/simplest-yocto-setup/blob/2ced1e749dfdf8e9438718deb84055b211ab5620/.config.yaml
+# https://github.com/texierp/kas-files/tree/8a267ec7217db79859e7ec45d449b6cb30345974
+# https://github.com/unitexe/meta-unit-kas/tree/e00a3d23e8bea45f38199b489f2bd5ba063e73ae
+header:
+  version: 14
+  includes:
+    - kas/repos/common.yml
+    - kas/repos/lts-mixins.yml
+
+build_system: openembedded
+distro: nodistro
+machine: unset
+target: 
+  - core-image-minimal
+
+bblayers_conf_header:
+  00_base-config: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+  
+local_conf_header:
+  00_base-config: |
+    # Version of the local.conf file format. Increment when the format changes
+    # in a way that requires manual migration of existing build directories.
+    CONF_VERSION = "2"
+
+    # Assume building on 'x86_64' host by default.
+    SDKMACHINE ?= "x86_64"
+
+    # On patch failure, do nothing (noop) instead of aborting or opening a shell.
+    # Change to "user" to drop into a resolution shell when a patch fails to apply.
+    PATCHRESOLVE = "noop"
+
+    # Remap relative to TOPDIR for bitbake in container volumes.
+    #TMPDIR = "${TOPDIR}/tmp"
+    #DL_DIR = "${TOPDIR}/downloads"
+    #SSTATE_DIR = "${TOPDIR}/sstate-cache"
+
+    # ---------------------------------------------------------------------------
+    # Shared-state (build/sstate-cache) mirror
+    # ---------------------------------------------------------------------------
+    # SSTATE_MIRRORS tells BitBake where to look for prebuilt sstate objects
+    # before re-running tasks locally.  The value is a space-separated list of
+    # "file://.* <mirror-url>/PATH" pairs.  The literal token "PATH" is
+    # substituted at runtime with the relative sstate object path (e.g.
+    # "universal/ab/ab12cd…_do_compile.tar.zst"), so it must be kept verbatim.
+    #
+    # Multiple mirrors can be stacked by appending additional pairs:
+    #
+    #   SSTATE_MIRRORS:append = "file://.* file:///mnt/local-sstate/PATH"
+    #
+    # Set BB_HASHSERVE_UPSTREAM to the hash equivalence server that generated
+    # the remote sstate so that signature matching works correctly.
+    #
+    # See:
+    # https://docs.yoctoproject.org/dev/dev-manual/hashequivserver.html
+    # https://docs.yoctoproject.org/bitbake/2.8/bitbake-user-manual/bitbake-user-manual-ref-variables.html#term-BB_HASHSERVE_UPSTREAM
+    # https://www.thegoodpenguin.co.uk/blog/improving-yocto-build-time/
+
+    BB_SIGNATURE_HANDLER = "OEEquivHash"
+    BB_HASHSERVE = "wss://hashserv.yoctoproject.org/ws"
+    SSTATE_MIRRORS:append = " file://.* https://sstate.yoctoproject.org/all/PATH;downloadfilename=PATH"
+    #BB_HASHSERVE = "auto"
+    #BB_HASHSERVE_UPSTREAM = "hashserv.yoctoproject.org:8686"
+    #BB_HASHSERVE_UPSTREAM = "typhoon.yocto.io:8687"
+    #BB_HASHSERVE_UPSTREAM = "wss://hashserv.yoctoproject.org/ws"
+
+    # ---------------------------------------------------------------------------
+    # Downloads (build/downloads) mirror
+    # ---------------------------------------------------------------------------
+    # See: https://docs.yoctoproject.org/scarthgap/dev-manual/efficiently-fetching-sources.html#setting-up-effective-mirrors
+    # Then set SOURCE_MIRROR_URL to the base URL served by your mirror, e.g.:
+    #
+    #   SOURCE_MIRROR_URL = "http://mirror.example.com/sources/"
+    #   SOURCE_MIRROR_URL = "file:///mnt/mirror/yocto/sources/"
+
+    # URL of the local source mirror.
+    # Adjust this value for your environment before enabling this file.
+    # SOURCE_MIRROR_URL ?= "file:///mnt/shared/build/downloads/"
+
+    # Activate own-mirrors.bbclass — prepends SOURCE_MIRROR_URL to PREMIRRORS for
+    # all fetcher protocols (cvs, svn, git, gitsm, hg, bzr, p4, osc, http/https,
+    # ftp, npm, s3, crate, gs).
+    # INHERIT += "own-mirrors"
+
+    # Set BB_FETCH_PREMIRRORONLY = "1" to prevent BitBake from falling back to
+    # upstream servers when a source is not found in the mirror.
+    # Useful for air-gapped or reproducible offline build environments.
+    # BB_FETCH_PREMIRRORONLY = "1"
+
+    # TODO
+    #BB_GENERATE_MIRROR_TARBALLS ?= "1"
+
+    # Do shallow checkouts to save time and space, keep 3 latest commits.
+    # See: https://docs.yoctoproject.org/bitbake/2.8/bitbake-user-manual/bitbake-user-manual-ref-variables.html#term-BB_GIT_SHALLOW
+    #BB_GIT_SHALLOW ?= "1"
+    #BB_GIT_SHALLOW_DEPTH ?= "3"
+
+    # ---------------------------------------------------------------------------
+    # Build history and statistics.
+    # ---------------------------------------------------------------------------
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/build-quality.html#maintaining-build-output-quality
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/build-quality.html#enabling-and-disabling-build-history
+    INHERIT += "buildstats buildstats-summary buildhistory"
+    BUILDHISTORY_COMMIT = "1"
+
+    # ---------------------------------------------------------------------------
+    # Bitbake resource use
+    # ---------------------------------------------------------------------------
+    # Parallelism: cap BitBake task threads, parse threads, and make jobs at 50% of
+    # available CPU cores so the host stays responsive during builds.
+    # See:
+    # https://docs.yoctoproject.org/dev/dev-manual/limiting-resources.html
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/speeding-up-build.html
+    # https://github.com/search?q=oe.utils.cpu_count&type=code
+
+    # How many tasks bitbake should run in parallel?
+    BB_NUMBER_THREADS ?= "${@max(1, int(oe.utils.cpu_count() * 50 / 100))}"
+    BB_NUMBER_PARSE_THREADS ?= "${@max(1, int(oe.utils.cpu_count() * 50 / 100))}"
+
+    # How many jobs 'make' should run in parallel when compiling.
+    PARALLEL_MAKE ?= "-j ${@max(1, int(oe.utils.cpu_count() * 50 / 100))}"
+
+    #BB_NUMBER_THREADS ?= "${@int(oe.utils.cpu_count(at_least=2) / 4)}"
+    #PARALLEL_MAKE ?= "-j ${@int(oe.utils.cpu_count(at_least=2) / 4)}"
+
+    # ---------------------------------------------------------------------------
+    # Disk space usage and monitoring.
+    # ---------------------------------------------------------------------------
+    # Disk space and inode monitoring thresholds for the build.
+    # STOPTASKS: stop queuing new tasks when free space/inodes fall below the limit.
+    # HALT:      abort the build immediately when space drops to a critical level.
+    # Format: <action>,<path>,<min-free-space>,<min-free-inodes>
+    # See: https://docs.yoctoproject.org/scarthgap/ref-manual/variables.html#term-BB_DISKMON_DIRS
+    BB_DISKMON_DIRS ??= "\
+        STOPTASKS,${TMPDIR},1G,100K \
+        STOPTASKS,${DL_DIR},1G,100K \
+        STOPTASKS,${SSTATE_DIR},1G,100K \
+        STOPTASKS,/tmp,100M,100K \
+        HALT,${TMPDIR},100M,1K \
+        HALT,${DL_DIR},100M,1K \
+        HALT,${SSTATE_DIR},100M,1K \
+        HALT,/tmp,10M,1K"
+  
+    # Reduce diskspace usage by deleting temporary workspace and/or downloads.
+    # See: https://docs.yoctoproject.org/scarthgap/dev-manual/disk-space.html
+    # INHERIT += "rm_work"
+    INHERIT += "rm_work_and_downloads"

@@ -1,0 +1,32 @@
+From 692eaa24a0f65a72bbf1557b85dfc7074bac32c5 Mon Sep 17 00:00:00 2001
+From: Joonas Onatsu <joonas.onatsu@gofore.com>
+Date: Wed, 27 May 2026 19:18:28 +0300
+Subject: [PATCH] Make: Ignore returned error on 'make install'
+
+'do_install' step fails due to 'install' command
+emitting an error about existing install directory,
+which terminates the step on non-zero return code.
+
+Root cause for the strange behavior of 'install'
+is currently unknown, this is a temporary fix
+to ignore the emitted error during build.
+
+Upstream-Status: Pending
+Signed-off-by: Joonas Onatsu <joonas.onatsu@gofore.com>
+---
+ wpa_supplicant/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/wpa_supplicant/Makefile b/wpa_supplicant/Makefile
+index 16cdb6f..a5055be 100644
+--- a/wpa_supplicant/Makefile
++++ b/wpa_supplicant/Makefile
+@@ -69,7 +69,7 @@ mkconfig:
+ 	echo CONFIG_DRIVER_WEXT=y >> .config
+ 
+ $(DESTDIR)$(BINDIR)/%: %
+-	install -D $(<) $(@)
++	-install -D $(<) $(@)
+ 
+ install: $(addprefix $(DESTDIR)$(BINDIR)/,$(BINALL))
+ 	$(MAKE) -C ../src install

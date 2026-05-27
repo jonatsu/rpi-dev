@@ -1,0 +1,17 @@
+header:
+  version: 14
+
+repos:
+  meta-openembedded:
+    layers:
+      meta-multimedia:
+
+local_conf_header:
+  00_rpidistro-vlc: |
+    # Implementation of VLC with HW accelerated video decode through
+    # MMAL and the Raspberry PI's Distro implementation of ffmpeg.
+    # DISABLE_VC4GRAPHICS = "1"
+    PREFERRED_PROVIDER_vlc = "rpidistro-vlc"
+    PREFERRED_PROVIDER_ffmpeg = "rpidistro-ffmpeg"
+    PREFERRED_PROVIDER_libav = "rpidistro-ffmpeg"
+    PREFERRED_PROVIDER_libpostproc = "rpidistro-ffmpeg"

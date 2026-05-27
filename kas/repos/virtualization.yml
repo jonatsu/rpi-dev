@@ -1,0 +1,14 @@
+header:
+  version: 14
+
+repos:
+  # See: https://git.yoctoproject.org/meta-virtualization/about/?h=scarthgap
+  meta-virtualization:
+    url: https://git.yoctoproject.org/git/meta-virtualization
+    branch: scarthgap
+    commit: 8409bc0c8b9209327add72d8fa72571cdeb5521e
+    path: layers/meta-virtualization
+
+local_conf_header:
+  00_distro-features-add-virtualization: |
+    DISTRO_FEATURES:append = " virtualization"

@@ -1,0 +1,32 @@
+header:
+  version: 14
+  includes:
+    - kas/repos/raspberrypi.yml
+
+local_conf_header:
+  00_raspberrypi-common: |
+    # See documentation for detailed descriptions:
+    # https://meta-raspberrypi.readthedocs.io/en/latest/extra-build-config.html
+
+    # Common defaults for all RaspberryPi boards.
+
+    # Accepting the 'synaptics-killswitch' license is needed for proprietary firmware blobs.
+    # See: https://github.com/agherzan/meta-raspberrypi/blob/b4603a63b13e052a0f08761697fb5116a394bf64/docs/ipcompliance.md
+    LICENSE_FLAGS_ACCEPTED:append = " synaptics-killswitch"
+
+    RPI_USE_U_BOOT = "1"
+    ENABLE_UART = "1"
+    DISABLE_SPLASH = "1"
+    DISABLE_RPI_BOOT_LOGO = "1"
+    DISABLE_OVERSCAN = "1"
+
+    # Boot from SD card by default.
+    BOOT_MEDIA ?= "mmc"
+
+    # Prefer newer kernels.
+    PREFERRED_VERSION_linux-raspberrypi ?= "6.12.%"
+
+    IMAGE_FSTYPES = "tar.bz2 ext4 wic.bz2 wic.bmap"
+    # IMAGE_FSTYPES:remove = " rpi-sdimg"
+
+    IMAGE_INSTALL:append = " kernel-image kernel-devicetree kernel-modules"

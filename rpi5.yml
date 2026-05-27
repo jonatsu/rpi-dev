@@ -1,0 +1,21 @@
+header:
+  version: 14
+  includes:
+    - kas/distro.yml
+    - kas/machines/raspberrypi5.yml
+
+#env:
+#  BB_NUMBER_THREADS: "8"
+#  PARALLEL_MAKE: "-j8"
+
+local_conf_header:
+  00_custom-config: |
+    DL_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-downloads"
+    SSTATE_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-sstate"
+
+#  KAS_WORK_DIR: "${KAS_WORK_DIR:-$(pwd)}"
+  #custom: |
+  #  DL_DIR ??= "${TOPDIR}/../.bitbake-setup-downloads"
+  #  SSTATE_DIR ??= "${TOPDIR}/../.sstate-cache"
+  #  IMAGE_INSTALL:append = " dropbear"
+  #  EXTRA_IMAGE_FEATURES:append = " allow-root-login"

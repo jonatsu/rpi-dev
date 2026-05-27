@@ -1,0 +1,7 @@
+header:
+  version: 14
+
+local_conf_header:
+  00_raspberrypi-omxplayer: |
+    LICENSE_FLAGS_ACCEPTED:append = " commercial"
+

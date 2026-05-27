@@ -1,0 +1,32 @@
+header:
+  version: 14
+
+local_conf_header:
+  00_dev-config: |
+    # ---------------------------------------------------------------------------
+    # Development config.
+    # ---------------------------------------------------------------------------
+
+    # Keep build error reporting information.
+    # INHERIT += "report-error"
+
+    # Disable SBOM generation during development.
+    # See: https://docs.yoctoproject.org/scarthgap/dev-manual/sbom.html#creating-a-software-bill-of-materials
+    INHERIT:remove = "create-spdx"
+    INHERIT_DISTRO:remove = "create-spdx"
+    INHERIT:remove:class-native = "create-spdx"
+
+    # Extra image features enabled for development/debug builds:
+    #   debug-tweaks          - applies a collection of insecure debug shortcuts
+    #   allow-empty-password  - allow accounts with no password set
+    #   allow-root-login      - allow root SSH/console login
+    #   empty-root-password   - set the root password to empty
+    #   serial-autologin-root - auto-login root on the serial console
+    #   ssh-server-openssh    - install OpenSSH server
+    #   ssh-server-dropbear   - install Dropbear SSH server
+    #   package-management    - include the package manager and package database
+    #   hwcodecs              - install machine-specific hardware video codec support
+    #   nfs-server            - include NFS server kernel modules and utilities
+    #   x11                   - include X11 runtime client libraries
+    #   x11-base              - include a minimal X11 server
+    EXTRA_IMAGE_FEATURES:append = "debug-tweaks allow-empty-password allow-root-login empty-root-password serial-autologin-root ssh-server-dropbear"

@@ -1,0 +1,14 @@
+header:
+  version: 14
+
+repos:
+  # See: https://git.yoctoproject.org/meta-security/about/?h=scarthgap
+  meta-security:
+    url: https://git.yoctoproject.org/git/meta-security
+    branch: scarthgap
+    commit: b13f1705d723650de61277670c8a76aadea4cfdd
+    path: layers/meta-security
+
+local_conf_header:
+  00_distro-features-add-security: |
+    DISTRO_FEATURES:append = " security"

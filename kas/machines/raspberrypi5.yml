@@ -1,0 +1,20 @@
+# https://github.com/YoeDistro/yoe-distro/blob/f697a9e22bba1ad5dc15a770604d1be9e27a603a/kas/rpi4-64.yml
+header:
+  version: 14
+  includes:
+    - kas/machines/raspberrypi/raspberrypi-common.yml
+    - kas/machines/raspberrypi/optional/rpidistro-vlc.yml
+    - kas/machines/raspberrypi/optional/omxplayer.yml
+
+machine: raspberrypi5
+
+local_conf_header:
+  00_raspberrypi-5: |
+    # See documentation for detailed descriptions:
+    # https://meta-raspberrypi.readthedocs.io/en/latest/extra-build-config.html
+
+    # RPi 5 has WiFi.
+    DISTRO_FEATURES:append = "wifi"
+    
+    # At least the 2GB RAM version uses the D0 chip variant, which requires this:
+    RPI_KERNEL_DEVICETREE_OVERLAYS:append = " overlays/bcm2712d0.dtbo"

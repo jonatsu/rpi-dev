@@ -6,7 +6,6 @@ local_conf_header:
     # ---------------------------------------------------------------------------
     # Development config.
     # ---------------------------------------------------------------------------
-
     # Keep build error reporting information.
     # INHERIT += "report-error"
 
@@ -29,4 +28,4 @@ local_conf_header:
     #   nfs-server            - include NFS server kernel modules and utilities
     #   x11                   - include X11 runtime client libraries
     #   x11-base              - include a minimal X11 server
-    EXTRA_IMAGE_FEATURES:append = "debug-tweaks allow-empty-password allow-root-login empty-root-password serial-autologin-root ssh-server-dropbear"
+    # EXTRA_IMAGE_FEATURES:append = "debug-tweaks serial-autologin-root ssh-server-dropbear"

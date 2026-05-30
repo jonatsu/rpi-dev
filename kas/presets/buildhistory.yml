@@ -1,0 +1,16 @@
+
+header:
+  version: 14
+  
+local_conf_header:
+  00_build-history: |
+    # ---------------------------------------------------------------------------
+    # Build history.
+    # ---------------------------------------------------------------------------
+    #
+    # References:
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/build-quality.html#maintaining-build-output-quality
+    # https://docs.yoctoproject.org/scarthgap/ref-manual/variables.html#term-BUILDHISTORY_FEATURES
+    INHERIT += "buildhistory"
+    BUILDHISTORY_COMMIT = "1"
+

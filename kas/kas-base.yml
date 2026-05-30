@@ -73,7 +73,7 @@ local_conf_header:
     #BB_HASHSERVE_UPSTREAM = "wss://hashserv.yoctoproject.org/ws"
 
     # ---------------------------------------------------------------------------
-    # Downloads (build/downloads) mirror
+    # Downloads (build/downloads) mirroring
     # ---------------------------------------------------------------------------
     # See: https://docs.yoctoproject.org/scarthgap/dev-manual/efficiently-fetching-sources.html#setting-up-effective-mirrors
     # Then set SOURCE_MIRROR_URL to the base URL served by your mirror, e.g.:
@@ -104,15 +104,7 @@ local_conf_header:
     #BB_GIT_SHALLOW_DEPTH ?= "3"
 
     # ---------------------------------------------------------------------------
-    # Build history and statistics.
-    # ---------------------------------------------------------------------------
-    # https://docs.yoctoproject.org/scarthgap/dev-manual/build-quality.html#maintaining-build-output-quality
-    # https://docs.yoctoproject.org/scarthgap/dev-manual/build-quality.html#enabling-and-disabling-build-history
-    INHERIT += "buildstats buildstats-summary buildhistory"
-    BUILDHISTORY_COMMIT = "1"
-
-    # ---------------------------------------------------------------------------
-    # Bitbake resource use
+    # Bitbake resource usage
     # ---------------------------------------------------------------------------
     # Parallelism: cap BitBake task threads, parse threads, and make jobs at 50% of
     # available CPU cores so the host stays responsive during builds.
@@ -151,5 +143,6 @@ local_conf_header:
   
     # Reduce diskspace usage by deleting temporary workspace and/or downloads.
     # See: https://docs.yoctoproject.org/scarthgap/dev-manual/disk-space.html
+    # Delete recipe work directories after packaging to reclaim disk space.
     # INHERIT += "rm_work"
     INHERIT += "rm_work_and_downloads"

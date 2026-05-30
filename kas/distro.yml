@@ -1,8 +1,0 @@
-header:
-  version: 14
-  includes:
-    - kas/base.yml
-    - kas/dev-config.yml
-
-distro: poky
-target: core-image-sato

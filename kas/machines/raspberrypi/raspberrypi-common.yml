@@ -32,4 +32,3 @@ local_conf_header:
     # IMAGE_FSTYPES = "tar.bz2 ext4 wic.bz2 wic.bmap"
     # IMAGE_FSTYPES:remove = " rpi-sdimg"
 
-    IMAGE_INSTALL:append = " kernel-image kernel-devicetree kernel-modules"

@@ -21,7 +21,11 @@ local_conf_header:
   00_custom-config: |
     DL_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-downloads"
     SSTATE_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-sstate"
-    
+
+    # Store the kernel modules in rootfs.
+    IMAGE_INSTALL:append = " kernel-modules"
+    #IMAGE_INSTALL:append = " kernel-image kernel-devicetree kernel-modules"
+
     # IPK has smallest package size.
     # https://docs.yoctoproject.org/scarthgap/ref-manual/classes.html#ref-classes-package
     PACKAGE_CLASSES = "package_ipk"
@@ -46,7 +50,6 @@ local_conf_header:
     IMAGE_BUILDINFO_VARS:append = " DATETIME DISTRO_NAME IMAGE_BASENAME MACHINE TUNE_PKGARCH"
     IMAGE_BUILDINFO_VARS:append = " MACHINE_FEATURES DISTRO_FEATURES COMMON_FEATURES IMAGE_FEATURES"
     IMAGE_BUILDINFO_VARS:append = " TUNE_FEATURES TARGET_FPU"
-
 
     # Extra image features enabled for development/debug builds:
     #   debug-tweaks          - applies a collection of insecure debug shortcuts

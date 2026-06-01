@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+# Some example configurations and references:
+# https://github.com/avocado-linux/meta-avocado/tree/scarthgap/kas
+# https://github.com/elisa-tech/meta-sgl/tree/main/kas
+# https://github.com/YoeDistro/yoe-distro/blob/f697a9e22bba1ad5dc15a770604d1be9e27a603a/kas/rpi4-64.yml
+# https://github.com/tez-capital/tezsign/blob/b1d3841e8af0b24705165b0233edcdd0f93f8797/kas/rpi-base.yml
+# https://github.com/TheYoctoJester/meta-mender-community/blob/57dc30d45cc402458f177cbf57412401fb7b146e/kas/raspberrypi5.yml
+# https://github.com/gaknoid/project-os/blob/ea1a1da03e329e2dbdbbb0df23e189bd1ba3ec7f/layers/meta-project/conf/distro/include/default.inc
+header:
+  version: 20
+  includes:
+    - kas/vendor/raspberrypi.yml
+    - kas/machine/raspberrypi-common.yml
+
+machine: raspberrypi5
+
+local_conf_header:
+  00_raspberrypi-5: |
+    # ---------------------------------------------------------------------------
+    # Raspberry Pi 5 configuration.
+    # ---------------------------------------------------------------------------
+    #
+    # Documentation:https://meta-raspberrypi.readthedocs.io/en/latest/extra-build-config.html
+    DISABLE_SPLASH = "1"
+    DISABLE_RPI_BOOT_LOGO = "1"
+    DISABLE_OVERSCAN = "1"
+
+    RPI_USE_U_BOOT = "1"
+
+    ENABLE_UART = "1"
+
+    # Enable I2C and autoload kernel modules.
+    ENABLE_I2C = "1"
+    KERNEL_MODULE_AUTOLOAD:rpi_append = " i2c-dev i2c-bcm2708"
+
+    # Default to booting from SD card.
+    BOOT_MEDIA ?= "mmc"
+
+    # Default boot delay is 1 second.
+    BOOT_DELAY ?= "2"
+
+    # At least the 2GB RAM version uses the D0 chip variant, which requires this:
+    RPI_KERNEL_DEVICETREE_OVERLAYS:append = " overlays/bcm2712d0.dtbo"
+
+    # RPi 5 has WiFi.
+    DISTRO_FEATURES:append = "wifi"
+
+    # Prefer latest kernel.
+    PREFERRED_VERSION_linux-raspberrypi ?= "6.12.%"
+
+    # According to meta-raspberrypi docs, disabling the vc4 graphics will set 'userland'
+    # as provider for 'gl' libraries instead of 'mesa'. However 'userland' does not support
+    # 64-bit architecture of the RPi 5, so we keep vc4 enabled to avoid issues.
+    #DISABLE_VC4GRAPHICS = "1"
+
+    IMAGE_FSTYPES = "wic.xz wic.bmap ext4.xz tar.xz"
+    # IMAGE_FSTYPES = "tar.bz2 ext4 wic.bz2 wic.bmap"
+    # IMAGE_FSTYPES:remove = " rpi-sdimg"

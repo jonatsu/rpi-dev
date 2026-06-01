@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+local_conf_header:
+  00_enable-build-info: |
+    # ---------------------------------------------------------------------------
+    # Enable build information to be saved into the image and available at runtime.
+    # ---------------------------------------------------------------------------
+    # Documentation:
+    # https://docs.yoctoproject.org/scarthgap/ref-manual/classes.html#image-buildinfo
+    # https://docs.yoctoproject.org/scarthgap/ref-manual/variables.html#term-IMAGE_BUILDINFO_VARS
+    USER_CLASSES:append = " image-buildinfo"
+
+    # Additional info to save into buildinfo (/etc/buildinfo).
+    IMAGE_BUILDINFO_VARS:append = " DATETIME DISTRO_NAME IMAGE_BASENAME MACHINE TUNE_PK GARCH"
+    IMAGE_BUILDINFO_VARS:append = " MACHINE_FEATURES DISTRO_FEATURES COMMON_FEATURES IMAGE_FEATURES"
+    IMAGE_BUILDINFO_VARS:append = " TUNE_FEATURES TARGET_FPU"

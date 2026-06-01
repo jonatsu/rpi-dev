@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+# For usage, see: https://git.yoctoproject.org/meta-security/about/?h=scarthgap
+repos:
+  meta-security:
+    url: "https://git.yoctoproject.org/git/meta-security"
+    branch: "scarthgap"
+    commit: "b13f1705d723650de61277670c8a76aadea4cfdd"
+    path: "layers/meta-security"
+    layers:
+      .:
+
+local_conf_header:
+  00_distro-features-add-security: |
+    DISTRO_FEATURES:append = " security"

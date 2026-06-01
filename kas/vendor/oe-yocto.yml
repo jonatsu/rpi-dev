@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+# Yocto Project 5.0 LTS "Scarthgap"
+#
+# https://downloads.yoctoproject.org/releases/yocto/yocto-5.0.17/RELEASENOTES
+# https://docs.yoctoproject.org/migration-guides/release-notes-5.0.17.html
+# https://docs.yoctoproject.org/scarthgap/migration-guides/migration-5.0.html#release-5-0-lts-scarthgap
+#
+# Default repository revision is tag 'yocto-5.0.17', unless otherwise specified.
+header:
+  version: 20
+
+defaults:
+  repos:
+    branch: "scarthgap"
+
+repos:
+  bitbake:
+    url: "https://github.com/openembedded/bitbake.git"
+    # Cannot use 'branch' and 'tag' simultaneously.
+    # tag: yocto-5.0.17
+    branch: "2.8"
+    commit: "d3b4c352dd33fca90cd31649eda054b884478739"
+    path: "layers/bitbake"
+    layers:
+      bitbake: "disabled"
+      # or '.: "disabled"'
+
+  meta-openembedded:
+    url: "https://github.com/openembedded/meta-openembedded.git"
+    commit: "ae7dfb12245c7f9b9a353499e2688015bd4e6413"
+    path: "layers/meta-openembedded"
+    layers:
+      meta-oe:
+      meta-perl:
+      meta-python:
+      meta-networking:
+      meta-filesystems:
+      # TODO: check if any of the following are needed:
+      # meta-initramfs:
+      # meta-webserver:
+      # meta-multimedia:
+      # meta-gnome:
+      # meta-xfce:
+
+  # For 'openembedded-core', we need to use later commit than specified by the tag to fix
+  # some bugs, e.g 'glibc' fix:
+  # - https://git.openembedded.org/openembedded-core/commit/?h=scarthgap&id=689bd1811c2300263a8a86ba3b46bbc6b1622323
+  # - https://git.openembedded.org/openembedded-core/patch/?id=689bd1811c2300263a8a86ba3b46bbc6b1622323
+  #
+  # The 'yocto-5.0.17' tag is at 52380df998b3a8fe6a091f8547434a3231320a8e, but we use the latest commit
+  # ece80784b493c8b7493478fa2ba0dc1d6d80aa79, committed at 2026-05-15 13:25:33 +0100.
+  openembedded-core:
+    url: "https://github.com/openembedded/openembedded-core.git"
+    commit: "ece80784b493c8b7493478fa2ba0dc1d6d80aa79"
+    path: "layers/openembedded-core"
+    layers:
+      meta:
+
+  meta-yocto:
+    url: "https://git.yoctoproject.org/git/meta-yocto"
+    commit: "c7c38663a1cafb1fa8593c0b246811e51d3bbe20"
+    path: "layers/meta-yocto"
+    layers:
+      meta-poky:
+      meta-yocto-bsp:
+
+  yocto-docs:
+    url: "https://git.yoctoproject.org/git/yocto-docs"
+    commit: "aa7226705451e6c1ef964d49963bbed29b267c27"
+    path: "layers/yocto-docs"
+    layers:
+      documentation: "disabled"

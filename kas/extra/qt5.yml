@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+repos:
+  meta-qt5:
+    url: "https://github.com/meta-qt5/meta-qt5.git"
+    branch: "scarthgap"
+    commit: "227cf5e7b64c93dfc1a45f235c466db8c3fd8707"
+    path: "layers/meta-qt5"
+    layers:
+      .:

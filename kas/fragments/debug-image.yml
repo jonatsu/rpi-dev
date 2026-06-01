@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+local_conf_header:
+  00_debug-image: |
+    # ---------------------------------------------------------------------------
+    # Debug image configuration and tools.
+    # ---------------------------------------------------------------------------
+    # Documentation:
+    # https://git.openembedded.org/openembedded-core/tree/meta/classes-recipe/core-image.bbclass?h=scarthgap
+    #
+    # IMAGE_FEATURES useful for debugging and development. These are in addition to the default IMAGE_FEATURES.
+    #
+    # By default we install packagegroup-core-boot and packagegroup-base-extended packages;
+    # this gives us working (console only) rootfs.
+    #
+    # Available IMAGE_FEATURES:
+    #
+    # - tools-debug         - debugging tools
+    # - tools-profile       - profiling tools
+    # - tools-testapps      - tools usable to make some device tests
+    # - tools-sdk           - SDK (C/C++ compiler, autotools, etc.)
+    # - nfs-server          - NFS server
+    # - nfs-client          - NFS client
+    # - ssh-server-dropbear - SSH server (dropbear)
+    # - ssh-server-openssh  - SSH server (openssh)
+    # - dev-pkgs            - development packages (headers, etc.) for all installed packages in the rootfs
+    # - dbg-pkgs            - debug symbol packages for all installed packages in the rootfs
+    # - debug-tweaks        - makes an image suitable for development, e.g. allowing passwordless root logins
+    #   - empty-root-password
+    #   - allow-empty-password
+    #   - allow-root-login
+    #   - post-install-logging
+    # - allow-empty-password  - allow accounts with no password set
+    # - allow-root-login      - allow root SSH/console login
+    # - empty-root-password   - set the root password to empty
+    # - serial-autologin-root - with 'empty-root-password': autologin 'root' on the serial console
+    EXTRA_IMAGE_FEATURES:append = " debug-tweaks serial-autologin-root"
+
+    # Disable SBOM generation during development.
+    # See: https://docs.yoctoproject.org/scarthgap/dev-manual/sbom.html#creating-a-software-bill-of-materials
+    # INHERIT:remove = "create-spdx"
+    # INHERIT_DISTRO:remove = "create-spdx"
+    # INHERIT:remove:class-native = "create-spdx"

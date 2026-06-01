@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+# TODO: rust and go maybe not needed?
+repos:
+  meta-lts-mixin-uboot:
+    url: "https://git.yoctoproject.org/meta-lts-mixins"
+    branch: "scarthgap/u-boot"
+    commit: "a44882db02a0ed0f149371831bfbe067665eb42b"
+    path: "layers/meta-lts-mixin-uboot"
+    layers:
+      .:
+
+  # meta-lts-mixin-rust:
+  #   url: "https://git.yoctoproject.org/meta-lts-mixins"
+  #   branch: "scarthgap/rust"
+  #   commit: "c19b6da5a3afd3c892b3b1b44983e993ac6d5308"
+  #   path: "layers/meta-lts-mixin-rust"
+  #   layers:
+  #     .:
+  #
+  # meta-lts-mixin-go:
+  #   url: "https://git.yoctoproject.org/meta-lts-mixins"
+  #   branch: "scarthgap/go"
+  #   commit: "88ad0c00dc998ad5516288d2ca4a4c528c6a43ae"
+  #   path: "layers/meta-lts-mixin-go"
+  #   layers:
+  #     .:

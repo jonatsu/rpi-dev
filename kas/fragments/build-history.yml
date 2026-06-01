@@ -1,16 +1,15 @@
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
 header:
-  version: 14
-  
+  version: 20
+
 local_conf_header:
-  00_build-history: |
+  00_enable-build-history: |
     # ---------------------------------------------------------------------------
-    # Build history.
+    # Enable build history to track build output quality and regressions.
     # ---------------------------------------------------------------------------
-    #
-    # References:
+    # Documentation:
     # https://docs.yoctoproject.org/scarthgap/dev-manual/build-quality.html#maintaining-build-output-quality
     # https://docs.yoctoproject.org/scarthgap/ref-manual/variables.html#term-BUILDHISTORY_FEATURES
-    INHERIT += "buildhistory"
+    USER_CLASSES:append = " buildhistory"
     BUILDHISTORY_COMMIT = "1"
 

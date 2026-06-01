@@ -1,6 +1,0 @@
-header:
-  version: 14
-
-local_conf_header:
-  00_libc-musl: |
-    TCLIBC = "musl"

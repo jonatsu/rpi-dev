@@ -1,15 +1,14 @@
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
 header:
-  version: 14
-  
+  version: 20
+
 local_conf_header:
-  00_build-statistics: |
+  00_enable-build-statistics: |
     # ---------------------------------------------------------------------------
-    # Build statistics and summary.
+    # Enable build statistics to track build performance and identify bottlenecks.
     # ---------------------------------------------------------------------------
-    #
-    # References:
+    # Documentation:
     # https://docs.yoctoproject.org/scarthgap/ref-manual/classes.html#buildstats
     # https://docs.yoctoproject.org/scarthgap/ref-manual/classes.html#buildstats-summary
-    INHERIT += "buildstats buildstats-summary"
+    USER_CLASSES:append = " buildstats buildstats-summary"
 

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+machine: unset
+
+local_conf_header:
+  00_raspberrypi-licenses: |
+    # ---------------------------------------------------------------------------
+    # RaspberryPi firmware etc licensing.
+    # ---------------------------------------------------------------------------
+    #
+    # By accepting the 'synaptics-killswitch' license, you agree that Synaptics can revoke their
+    # license at any time on the Raspberry Pi firmware. Accepting this license is required to use
+    # the proprietary firmware blobs for the Raspberry Pi's WiFi and Bluetooth functionality.
+    # See: https://github.com/agherzan/meta-raspberrypi/blob/b4603a63b13e052a0f08761697fb5116a394bf64/docs/ipcompliance.md
+    #
+    # Some graphics drivers and apps are under the 'commercial' license flag, e.g 'omxplayer'.
+    LICENSE_FLAGS_ACCEPTED:append = " commercial synaptics-killswitch"
+
+#  01_raspberrypi-multimedia: |
+#    # Enable the implementation of VLC with HW accelerated video
+#    # decode through MMAL and the Raspberry PI's Distro implementation of ffmpeg.
+#    PREFERRED_PROVIDER_vlc = "rpidistro-vlc"
+#    PREFERRED_PROVIDER_ffmpeg = "rpidistro-ffmpeg"
+#    PREFERRED_PROVIDER_libav = "rpidistro-ffmpeg"
+#    PREFERRED_PROVIDER_libpostproc = "rpidistro-ffmpeg"

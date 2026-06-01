@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+local_conf_header:
+  00_resource-limiting: |
+    # ---------------------------------------------------------------------------
+    # Bitbake resource usage limits.
+    # ---------------------------------------------------------------------------
+    # Documentation:
+    # https://docs.yoctoproject.org/dev/dev-manual/limiting-resources.html
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/speeding-up-build.html
+    # https://github.com/search?q=oe.utils.cpu_count&type=code
+    #
+    # Cap BitBake task threads, parse threads, and make jobs at 50% of
+    # available CPU cores so the host stays responsive during builds.
+    BB_NUMBER_THREADS ?= "${@max(1, int(oe.utils.cpu_count() * 50 / 100))}"
+    BB_NUMBER_PARSE_THREADS ?= "${@max(1, int(oe.utils.cpu_count() * 50 / 100))}"
+    PARALLEL_MAKE ?= "-j ${@max(1, int(oe.utils.cpu_count() * 50 / 100))}"
+
+    #BB_NUMBER_THREADS ?= "${@int(oe.utils.cpu_count(at_least=2) / 4)}"
+    #PARALLEL_MAKE ?= "-j ${@int(oe.utils.cpu_count(at_least=2) / 4)}"
+
+    # Backpressure: pause new task dispatch when system pressure exceeds thresholds.
+    # Values are microseconds of stall per second (1000000 = 100% stall).
+    # In-flight tasks always finish; only NEW task starts are paused.
+    # See bitbake/lib/bb/runqueue.py exceeds_max_pressure() for the implementation.
+    # BB_PRESSURE_MAX_MEMORY=20000  -> 2% memory stall, pause early to head off OOM during chromium-class links
+    # BB_PRESSURE_MAX_CPU=500000    -> 50% CPU stall, OK to push CPU; only pause under heavy contention
+    # BB_PRESSURE_MAX_IO=100000     -> 10% IO stall, prevent thrashing on tmpdir / cache writes
+    BB_PRESSURE_MAX_MEMORY = "20000"
+    BB_PRESSURE_MAX_CPU    = "500000"
+    BB_PRESSURE_MAX_IO     = "100000"
+
+    # Chromium's link phase is memory-heavy: max_jobs_per_link is bound to PARALLEL_MAKE
+    # in chromium-gn.inc. Globally we run -j4 (see iac build task env);
+    # cap chromium tighter to bound peak link-time memory.
+    PARALLEL_MAKE:pn-chromium-ozone-wayland = "-j 2"
+    PARALLEL_MAKE:pn-chromium-x11 = "-j 2"
+
+    # Reduce diskspace usage by deleting temporary workspace and/or downloads.
+    # See: https://docs.yoctoproject.org/scarthgap/dev-manual/disk-space.html
+    # Delete recipe work directories after packaging to reclaim disk space.
+    INHERIT += "rm_work"
+    #INHERIT += "rm_work_and_downloads"

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+header:
+  version: 20
+  includes:
+    - kas/kas-base.yml
+    - kas/fragments/debug-image.yml
+    - kas/machine/raspberrypi5.yml
+    - kas/feature/docker.yml
+
+distro: poky
+target:
+  - core-image-base
+# task: populate_sdk
+
+repos:
+  meta-rpi-dev:
+    #path: meta-rpi-dev
+    layers:
+      meta-rpi-dev:
+
+local_conf_header:
+  00_custom-config: |
+    DL_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-downloads"
+    SSTATE_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-sstate"
+
+    # Store the kernel modules in rootfs.
+    IMAGE_INSTALL:append = " kernel-modules"
+    #IMAGE_INSTALL:append = " kernel-image kernel-devicetree kernel-modules"

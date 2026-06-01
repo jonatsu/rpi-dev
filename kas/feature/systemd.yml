@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+local_conf_header:
+  00_enable-systemd: |
+    # ---------------------------------------------------------------------------
+    # SystemD init manager.
+    # ---------------------------------------------------------------------------
+    # Documentation:
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/init-manager.html
+    # https://docs.yoctoproject.org/scarthgap/ref-manual/variables.html#term-DISTRO_FEATURES_BACKFILL_CONSIDERED
+    # https://git.openembedded.org/openembedded-core/tree/meta/conf/distro/include/init-manager-systemd.inc?h=scarthgap
+    INIT_MANAGER = "systemd"
+    DISTRO_FEATURES:append = " pam "
+
+    # 'udev' device manager provided by 'systemd'.
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/device-manager.html
+    VIRTUAL-RUNTIME_dev_manager = "systemd"
+
+    # Prevent pulling in unnecessary syslog providers since 'systemd' provides its own logging.
+    VIRTUAL-RUNTIME_syslog = ""
+    VIRTUAL-RUNTIME_base-utils-syslog = ""
+
+    # Suppress the sysvinit backfill warning since we intentionally replaced it.
+    DISTRO_FEATURES_BACKFILL_CONSIDERED:append = " sysvinit"

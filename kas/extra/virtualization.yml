@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+header:
+  version: 20
+
+# For usage, see https://git.yoctoproject.org/meta-virtualization/about/?h=scarthgap
+repos:
+  meta-virtualization:
+    url: "https://git.yoctoproject.org/git/meta-virtualization"
+    branch: "scarthgap"
+    commit: "8409bc0c8b9209327add72d8fa72571cdeb5521e"
+    path: "layers/meta-virtualization"
+    layers:
+      .:
+
+local_conf_header:
+  00_distro-features-add-virtualization: |
+    DISTRO_FEATURES:append = " virtualization"

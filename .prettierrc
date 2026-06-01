@@ -1,0 +1,12 @@
+{
+  "semi": false,
+  "overrides": [
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "singleQuote": false,
+        "quoteProps": "as-needed"
+      }
+    }
+  ]
+}

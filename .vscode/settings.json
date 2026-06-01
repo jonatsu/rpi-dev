@@ -1,0 +1,14 @@
+{
+    // Annoyingly, the Redhat-YAML extension does NOT honor .editorconfig files for YAML files.
+    // See: https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml
+    "[yaml]": {
+        "editor.autoIndent": "keep",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}

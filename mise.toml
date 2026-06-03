@@ -73,8 +73,15 @@ MISE_CACHE_DIR = "{{ config_root }}/.mise/cache"
 KAS_VERSION = { value = "{{ tools['pipx:kas'].version }}", tools = true }
 
 PROJECT_ROOT = "{{ config_root }}"
-PROJECT_CACHE = "{{ config_root }}/.cache"
-PROJECT_TMPDIR = "{{ config_root }}/.cache/tmp"
+CACHE_DIR = "{{ config_root }}/.cache"
+TMPDIR = "{{ config_root }}/.cache/tmp"
+DL_DIR = "{{ config_root }}/.cache/bitbake-downloads"
+SSTATE_DIR = "{{ config_root }}/.cache/bitbake-sstate"
+WORK_DIR = "{{ env.PROJECT_ROOT }}/work"
+BUILDS_DIR = "{{ env.PROJECT_ROOT }}/work/builds"
+
+KAS_MACHINE = "{{ env.KAS_MACHINE | default(value='raspberrypi5') }}"
+#KAS_BUILD_DIR = "{{ env.PROJECT_ROOT }}/builds/build-{{ env.KAS_MACHINE | kebabcase }}"
 
 # Activate venv automatically. Also tell 'uv' to install seed
 # packages (pip, setuptools, and wheel) into the venv.
@@ -87,11 +94,11 @@ UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
 # https://docs.astral.sh/uv/reference/environment/
 #MYPY_CACHE_DIR = "{{config_root}}/.cache/mypy/cache"
 #RUFF_CACHE_DIR = "{{config_root}}/.cache/ruff/cache"
-#UV_CACHE_DIR = "{{ env.PROJECT_CACHE }}/uv/cache"
-#UV_PYTHON_INSTALL_DIR = "{{ env.PROJECT_CACHE }}/uv/python"
-#UV_TOOL_DIR = "{{ env.PROJECT_CACHE }}/uv/tool"
-#UV_TOOL_BIN_DIR = "{{ env.PROJECT_CACHE }}/uv/tool_bin"
-#_.path = ["{{ env.PROJECT_CACHE }}/uv/tool_bin"]
+#UV_CACHE_DIR = "{{ env.CACHE_DIR }}/uv/cache"
+#UV_PYTHON_INSTALL_DIR = "{{ env.CACHE_DIR }}/uv/python"
+#UV_TOOL_DIR = "{{ env.CACHE_DIR }}/uv/tool"
+#UV_TOOL_BIN_DIR = "{{ env.CACHE_DIR }}/uv/tool_bin"
+#_.path = ["{{ env.CACHE_DIR }}/uv/tool_bin"]
 
 
 ############################################################################
@@ -102,7 +109,7 @@ color = true
 experimental = true # Needed for hooks etc
 auto_install = true # Auto-install missing tools
 disable_backends = ["asdf"] # Disable legacy asdf plugins for security reasons
-#raw = true # Connect stdin/stdout/stderr to child processes
+raw = true # Connect stdin/stdout/stderr to child processes
 
 # Show configured env vars and tools when entering project directory
 [settings.status]
@@ -148,3 +155,18 @@ run = 'check-jsonschema --schemafile "https://raw.githubusercontent.com/siemens/
 [tasks.lint]
 description = "Run linting tools"
 depends = ["lint:yaml", "lint:toml"]
+
+[tasks.build]
+description = "Build the project using KAS"
+run =  '''
+#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p "${TMPDIR}" "${CACHE_DIR}" "${DL_DIR}" "${SSTATE_DIR}"
+
+export KAS_WORK_DIR="${WORK_DIR}"
+export KAS_BUILD_DIR="${BUILDS_DIR}/build-${KAS_MACHINE}"
+mkdir -p "${KAS_WORK_DIR}"
+mkdir -p "${KAS_BUILD_DIR}"
+
+kas build kas/project.yml
+'''

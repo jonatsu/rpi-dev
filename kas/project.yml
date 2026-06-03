@@ -14,6 +14,11 @@ target:
   - core-image-base
 # task: populate_sdk
 
+env:
+  TMPDIR: null
+  DL_DIR: null
+  SSTATE_DIR: null
+
 repos:
   meta-rpi-dev:
     #path: meta-rpi-dev
@@ -22,8 +27,8 @@ repos:
 
 local_conf_header:
   00_custom-config: |
-    DL_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-downloads"
-    SSTATE_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-sstate"
+    #DL_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-downloads"
+    #SSTATE_DIR = "/home/jonatsu/dev/yocto/.cache/bitbake-sstate"
 
     # Store the kernel modules in rootfs.
     IMAGE_INSTALL:append = " kernel-modules"

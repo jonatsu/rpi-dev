@@ -3,9 +3,10 @@
 header:
   version: 20
   includes:
-    - kas/kas-base.yml
+    - kas/base.yml
     - kas/fragments/debug-image.yml
     - kas/machine/raspberrypi5.yml
+    - kas/extra/security.yml
     - kas/feature/docker.yml
 
 distro: poky
@@ -27,3 +28,6 @@ local_conf_header:
     # Store the kernel modules in rootfs.
     IMAGE_INSTALL:append = " kernel-modules"
     #IMAGE_INSTALL:append = " kernel-image kernel-devicetree kernel-modules"
+
+    # Hostname
+    hostname:pn-base-files = "rpi5-yocto"

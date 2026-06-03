@@ -11,8 +11,11 @@
 header:
   version: 20
   includes:
+    - kas/templates/bblayers.conf.yml
+    - kas/templates/local.conf.yml
     - kas/vendor/oe-yocto.yml
     - kas/vendor/lts-mixins.yml
+    - kas/feature/systemd.yml
     - kas/fragments/build-history.yml
     - kas/fragments/build-info.yml
     - kas/fragments/build-statistics.yml
@@ -31,30 +34,8 @@ env:
   # PARALLEL_MAKE: "-j8"
   # KAS_WORK_DIR: "${KAS_WORK_DIR:-$(pwd)}"
 
-bblayers_conf_header:
-  00_standard: |
-    POKY_BBLAYERS_CONF_VERSION = "2"
-    BBPATH = "${TOPDIR}"
-    BBFILES ?= ""
-
 local_conf_header:
   00_standard: |
-    # Version of the local.conf file format. Increment when the format changes
-    # in a way that requires manual migration of existing build directories.
-    CONF_VERSION = "2"
-
-    # Assume 'x86_64' build host architecture by default.
-    SDKMACHINE ?= "x86_64"
-
-    # On patch failure, do nothing (noop) instead of aborting or opening a shell.
-    # Change to "user" to drop into a resolution shell when a patch fails to apply.
-    PATCHRESOLVE ?= "noop"
-
-    # Remap relative to TOPDIR for bitbake in container volumes.
-    #TMPDIR = "${TOPDIR}/tmp"
-    #DL_DIR = "${TOPDIR}/downloads"
-    #SSTATE_DIR = "${TOPDIR}/sstate-cache"
-
     # ---------------------------------------------------------------------------
     # Shared-state (build/sstate-cache) mirror
     # ---------------------------------------------------------------------------
@@ -120,4 +101,7 @@ local_conf_header:
     PACKAGE_CLASSES ?= "package_ipk"
 
     # Use uutils-coreutils as it has more permissive license than coreutils.
-    PREFERRED_PROVIDER_coreutils = "uutils-coreutils"
+    #PREFERRED_PROVIDER_coreutils = "uutils-coreutils"
+
+    # Add some common tools.
+    IMAGE_INSTALL:append = " nano"

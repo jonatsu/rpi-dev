@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+header:
+  version: 20
+
+# Documentation:
+# https://git.openembedded.org/openembedded-core/tree/meta/conf/templates/default/local.conf.sample?h=scarthgap
+local_conf_header:
+  00_oe-layersetup-local-conf-template: |
+    # This template file is based on 'oe-core/meta/conf/local.conf.sample'.
+
+    # CONF_VERSION is increased each time build/conf/ changes incompatibly and is used to
+    # track the version of this file when it was generated. This can safely be ignored if
+    # this doesn't mean anything to you.
+    CONF_VERSION = "2"
+
+    # Assume 'x86_64' build host architecture by default.
+    SDKMACHINE ?= "x86_64"
+
+    # On patch failure, do nothing (noop) instead of aborting or opening a shell.
+    # Change to "user" to drop into a resolution shell when a patch fails to apply.
+    PATCHRESOLVE ?= "noop"

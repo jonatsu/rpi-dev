@@ -10,23 +10,22 @@ local_conf_header:
     # Documentation:
     # https://git.openembedded.org/openembedded-core/tree/meta/classes-recipe/core-image.bbclass?h=scarthgap
     #
-    # IMAGE_FEATURES useful for debugging and development. These are in addition to the default IMAGE_FEATURES.
+    # The EXTRA_IMAGE_FEATURES variable allows extra packages to be added to the generated
+    # images. Some of these options are added to certain image types automatically. See
+    # meta/classes/image.bbclass and meta/classes/core-image.bbclass for more details.
     #
-    # By default we install packagegroup-core-boot and packagegroup-base-extended packages;
-    # this gives us working (console only) rootfs.
+    # Relevant IMAGE_FEATURES for debugging and development:
     #
-    # Available IMAGE_FEATURES:
-    #
-    # - tools-debug         - debugging tools
-    # - tools-profile       - profiling tools
-    # - tools-testapps      - tools usable to make some device tests
-    # - tools-sdk           - SDK (C/C++ compiler, autotools, etc.)
+    # - tools-debug         - add debugging tools (gdb, strace)
+    # - tools-profile       - add profiling tools (oprofile, exmap, lttng valgrind (x86 only))
+    # - tools-testapps      - add useful testing tools (ts_print, aplay, arecord etc.)
+    # - tools-sdk           - adds SDK tools (C/C++ compiler, make, pkgconfig, autotools etc.)
     # - nfs-server          - NFS server
     # - nfs-client          - NFS client
     # - ssh-server-dropbear - SSH server (dropbear)
     # - ssh-server-openssh  - SSH server (openssh)
-    # - dev-pkgs            - development packages (headers, etc.) for all installed packages in the rootfs
-    # - dbg-pkgs            - debug symbol packages for all installed packages in the rootfs
+    # - dev-pkgs            - add -dev packages containing development headers for all installed packages in the rootfs
+    # - dbg-pkgs            - add -dbg packages containing debug symbol packages for all installed packages in the rootfs
     # - debug-tweaks        - makes an image suitable for development, e.g. allowing passwordless root logins
     #   - empty-root-password
     #   - allow-empty-password
@@ -36,6 +35,7 @@ local_conf_header:
     # - allow-root-login      - allow root SSH/console login
     # - empty-root-password   - set the root password to empty
     # - serial-autologin-root - with 'empty-root-password': autologin 'root' on the serial console
+    # - post-install-logging  - log the output of postinstall scriptlets
     EXTRA_IMAGE_FEATURES:append = " debug-tweaks serial-autologin-root"
 
     # Disable SBOM generation during development.
@@ -43,3 +43,15 @@ local_conf_header:
     # INHERIT:remove = "create-spdx"
     # INHERIT_DISTRO:remove = "create-spdx"
     # INHERIT:remove:class-native = "create-spdx"
+    # SPDX_PRETTY = "1"
+    # Disable SPDX doc generation to avoid rm_work conflict and save disk
+    # INHERIT:remove = "create-spdx"
+
+    # Don't bother with runtime tests.
+    # https://docs.yoctoproject.org/scarthgap/ref-manual/classes.html#ptest
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/debugging.html#using-the-debuginfod-server-method
+    DISTRO_FEATURES:remove = " ptest"
+
+    # Disable debuginfod.
+    # https://docs.yoctoproject.org/scarthgap/dev-manual/debugging.html#using-the-debuginfod-server-method
+    DISTRO_FEATURES:remove = " debuginfod"

@@ -1,0 +1,10 @@
+# .miserc.toml — early-init settings loaded before config discovery
+# https://mise.jdx.dev/configuration/environments.html
+#
+# For supported template options, see: https://mise.jdx.dev/templates.html#miserc-template-support
+
+# Enable experimental features, needed for hooks etc
+MISE_EXPERIMENTAL = "true"
+
+# Tell mise to use Bash
+MISE_SHELL = "bash"

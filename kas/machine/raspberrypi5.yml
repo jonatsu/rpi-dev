@@ -7,6 +7,7 @@
 # https://github.com/tez-capital/tezsign/blob/b1d3841e8af0b24705165b0233edcdd0f93f8797/kas/rpi-base.yml
 # https://github.com/TheYoctoJester/meta-mender-community/blob/57dc30d45cc402458f177cbf57412401fb7b146e/kas/raspberrypi5.yml
 # https://github.com/gaknoid/project-os/blob/ea1a1da03e329e2dbdbbb0df23e189bd1ba3ec7f/layers/meta-project/conf/distro/include/default.inc
+# https://github.com/bcdevices/plt-agent-os/blob/7977242a0a4aa70a394edf04dac5d3639f2e7702/scripts/kas/kas-rpi-mfg-image.yml
 header:
   version: 20
   includes:
@@ -30,9 +31,11 @@ local_conf_header:
 
     ENABLE_UART = "1"
 
+    # Accept Synaptics Wi-Fi firmware license (CYW43455 on RPi5)
+
     # Enable I2C and autoload kernel modules.
     ENABLE_I2C = "1"
-    KERNEL_MODULE_AUTOLOAD:rpi_append = " i2c-dev i2c-bcm2708"
+    KERNEL_MODULE_AUTOLOAD:append:raspberrypi5 = " i2c-dev i2c-bcm2708"
 
     # Default to booting from SD card.
     BOOT_MEDIA ?= "mmc"
@@ -43,10 +46,14 @@ local_conf_header:
     # At least the 2GB RAM version uses the D0 chip variant, which requires this:
     RPI_KERNEL_DEVICETREE_OVERLAYS:append = " overlays/bcm2712d0.dtbo"
 
-    # RPi 5 has WiFi.
-    DISTRO_FEATURES:append = "wifi"
+    # WiFi only, no need for bluetooth.
+    MACHINE_FEATURES:append = " wifi"
 
-    # Prefer latest kernel.
+    # RPi5 has a built-in RTC (PCF85063A) — enable it.
+    MACHINE_FEATURES:append = " rtc"
+
+    # Prefer latest version of 'linux-raspberrypi' kernel.
+    PREFERRED_PROVIDER_virtual/kernel = "linux-raspberrypi"
     PREFERRED_VERSION_linux-raspberrypi ?= "6.12.%"
 
     # According to meta-raspberrypi docs, disabling the vc4 graphics will set 'userland'
@@ -57,3 +64,12 @@ local_conf_header:
     IMAGE_FSTYPES = "wic.xz wic.bmap ext4.xz tar.xz"
     # IMAGE_FSTYPES = "tar.bz2 ext4 wic.bz2 wic.bmap"
     # IMAGE_FSTYPES:remove = " rpi-sdimg"
+
+    # Keep UART RX high to prevent spurious keypresses halting U-Boot.
+    RPI_EXTRA_CONFIG:append:raspberrypi5 = "\n# Keep UART RX high\ngpio=15=ip,pu\n"
+
+# Disable VC4 KMS DRM driver — no display needed for a headless PLC.
+# Prevents meta-raspberrypi from appending dtoverlay=vc4-kms-v3d to config.txt,
+# which would keep the GPU clock trees and HDMI PLLs active.
+#DISABLE_VC4GRAPHICS = "1"
+

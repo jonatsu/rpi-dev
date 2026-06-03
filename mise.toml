@@ -1,0 +1,150 @@
+#:schema https://mise.en.dev/schema/mise.json
+
+# .mise.toml — mise tool configuration
+# https://mise.jdx.dev/getting-started.html
+# https://mise.jdx.dev/walkthrough.html
+#
+# How to use templating
+# https://mise.jdx.dev/templates.html#templates
+# https://mise.jdx.dev/tasks/templates.html#tera-templating
+#
+# Tool dependencies
+# https://mise.jdx.dev/dev-tools/#tool-dependencies
+#
+# Plugins for mise
+# https://github.com/mise-plugins
+
+min_version = "2024.9.0"
+
+
+############################################################################
+# Tools Configuration                                                      #
+############################################################################
+[tools]
+
+### Python and uv package/project manager ###
+#
+# Documentation:
+# https://mise.jdx.dev/lang/python.html#python
+# https://mise.jdx.dev/mise-cookbook/python.html#mise-python-cookbook
+#
+# Installing packages using 'pipx' with mise:
+# https://mise.jdx.dev/dev-tools/backends/pipx.html#usage
+#
+# Target Python version can be overridden by environment variable 'MISE_PYTHON_VERSION'.
+# The 'depends' option ensures the correct order of installation, for example; 'python' must
+# be installed before 'uv' since 'uv' depends on it.
+#python = "{{ get_env(name='MISE_PYTHON_VERSION', default='3.14') }}"
+python = "{{ env.MISE_PYTHON_VERSION | default(value='3.14') }}"
+uv = { version = "latest", depends = ["python"] }
+#uv = { version = "0.11.18", postinstall = "uv pip install -r requirements.txt"}
+
+"pipx:kas" = { version = "5.3", extras = "tui,verify", depends = ["uv"] }
+
+### Pre-commit, linting and formatting tools ###
+gitversion = "6.7.0"
+shellcheck = "latest"
+shfmt = "latest"
+yamllint = "latest"
+taplo = "latest"
+"pipx:check-jsonschema" = "latest"
+
+
+############################################################################
+# Environment Configuration                                                #
+############################################################################
+[env]
+
+# Documentation for environments:
+# https://mise.jdx.dev/environments/#environments
+# https://mise.jdx.dev/environments/#env-directives
+#
+# The option `tools = true` makes variables like `tools.python.path` available
+# when mise resolves tool-aware env vars at runtime.
+#
+# Using local directories for mise data
+# https://github.com/jdx/mise/discussions/4313#discussioncomment-12080380
+# MISE_DATA_DIR = "{{ exec(command='pwd') }}/.mise/data"
+MISE_DATA_DIR = "{{ config_root }}/.mise"
+MISE_STATE_DIR = "{{ config_root }}/.mise/state"
+MISE_CACHE_DIR = "{{ config_root }}/.mise/cache"
+
+# Common environment
+KAS_VERSION = { value = "{{ tools['pipx:kas'].version }}", tools = true }
+
+PROJECT_ROOT = "{{ config_root }}"
+PROJECT_CACHE = "{{ config_root }}/.cache"
+PROJECT_TMPDIR = "{{ config_root }}/.cache/tmp"
+
+# Activate venv automatically. Also tell 'uv' to install seed
+# packages (pip, setuptools, and wheel) into the venv.
+_.python.venv = { path = "{{ config_root }}/.venv", create = true, uv_create_args = ['--seed'] }
+
+# Ensure 'uv' uses the exact Python interpreter installed by 'mise install'.
+UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
+
+# Consolidate uv-related cache in workspace for hardlink in container
+# https://docs.astral.sh/uv/reference/environment/
+#MYPY_CACHE_DIR = "{{config_root}}/.cache/mypy/cache"
+#RUFF_CACHE_DIR = "{{config_root}}/.cache/ruff/cache"
+#UV_CACHE_DIR = "{{ env.PROJECT_CACHE }}/uv/cache"
+#UV_PYTHON_INSTALL_DIR = "{{ env.PROJECT_CACHE }}/uv/python"
+#UV_TOOL_DIR = "{{ env.PROJECT_CACHE }}/uv/tool"
+#UV_TOOL_BIN_DIR = "{{ env.PROJECT_CACHE }}/uv/tool_bin"
+#_.path = ["{{ env.PROJECT_CACHE }}/uv/tool_bin"]
+
+
+############################################################################
+# Tool Settings                                                            #
+############################################################################
+[settings]
+color = true
+experimental = true # Needed for hooks etc
+auto_install = true # Auto-install missing tools
+disable_backends = ["asdf"] # Disable legacy asdf plugins for security reasons
+#raw = true # Connect stdin/stdout/stderr to child processes
+
+# Show configured env vars and tools when entering project directory
+[settings.status]
+show_env = true
+show_tools = true
+
+# Allow mise to create and activate venv automatically
+# Also tell uv to install seed packages (pip, setuptools, and wheel) into the venv
+# See: https://mise.jdx.dev/mise-cookbook/python.html#mise-python-cookbook
+#[settings.python]
+#uv_venv_auto = "create|source"
+#uv_venv_create_args = ["--seed"]
+
+# Use 'uvx' instead of 'pipx' if available
+[settings.pipx]
+uvx = true
+
+
+############################################################################
+# Hooks                                                                    #
+############################################################################
+[hooks]
+enter = "mise install --yes"
+
+############################################################################
+# Tasks                                                                    #
+############################################################################
+[tasks."lint:yaml"]
+description = "Lint YAML files using yamllint"
+hide = true
+run = "yamllint ."
+
+[tasks."lint:toml"]
+description = "Lint TOML files using taplo"
+hide = true
+run = "taplo lint ."
+
+[tasks."lint:kas-schema"]
+description = "Lint KAS schema files using check-jsonschema"
+hide = true
+run = 'check-jsonschema --schemafile "https://raw.githubusercontent.com/siemens/kas/refs/tags/{{ env.KAS_VERSION }}/kas/schema-kas.json" .'
+
+[tasks.lint]
+description = "Run linting tools"
+depends = ["lint:yaml", "lint:toml"]

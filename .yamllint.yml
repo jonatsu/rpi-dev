@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# yamllint - linter for YAML files
+# https://yamllint.readthedocs.io/en/stable/index.html
+#
+# For all rules, see:
+# https://yamllint.readthedocs.io/en/stable/rules.html#
+extends: default
+locale: en_US.UTF-8
+#ignore-from-file: [.gitignore, .yamlignore]
+ignore-from-file: [.gitignore ]
+rules:
+  new-lines:
+    type: unix
+  # Don't throw a fit over long lines, but warn about them
+  line-length:
+    max: 120
+    level: warning
+  indentation:
+    indent-sequences: whatever
+  # Don't check keys for truthiness
+  truthy:
+    check-keys: false
+  # Don't care about document start markers (---)
+  document-start: disable
+  comments:
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+  # Don't enforce indentation for comments
+  comments-indentation: disable
